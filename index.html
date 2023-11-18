@@ -1,0 +1,50 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gameboy Reset Counter</title>
+    <!-- Add Bootstrap CSS link -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tahoma:wght@400;700&display=swap');
+    </style>
+</head>
+<body class="bg-light text-center">
+
+<div class="container-xs">
+    <h1 class="mt-5">Gameboy Reset Counter</h1>
+    <p>Counter: <span id="counter" class="fw-bold">0</span></p>
+
+    <div class="btn-group mb-3" role="group" aria-label="Counter Controls">
+        <button class="btn btn-success" onclick="incrementCounter()">Increment</button>
+        <button class="btn btn-warning" onclick="decrementCounter()">Decrement</button>
+        <button class="btn btn-danger" onclick="resetApplication()">Reset</button>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <label for="manualCounter" class="form-label text-md-end">Update counter manually:</label>
+        </div>
+        <div class="col-md-5">
+            <input type="number" id="manualCounter" class="form-control" />
+        </div>
+        <div class="col-md-1">
+            <button class="btn btn-success" onclick="updateCounterManually()">Update</button>
+        </div>
+    </div>
+</div>
+
+<footer class="footer mt-auto py-3 bg-light">
+    <div class="container">
+        <p class="text-muted">Works with PS4 and Xbox Controllers</p>
+    </div>
+</footer>
+
+<!-- Add Bootstrap JS and Popper.js -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
