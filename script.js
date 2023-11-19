@@ -1,10 +1,36 @@
 // script.js
 let buttonStates = {
-    'X': false,
-    'O': false,
-    'Share': false,
-    'Options': false
+    'A': false,
+    'B': false,
+    'Select': false,
+    'Start': false
 };
+
+let controllers = [
+    {
+        name: "PS4 Controller",
+        vendor: "054c",
+        buttonMappings: {
+            0: 'A', // X
+            1: 'B', // O
+            8: 'Select', // Share
+            9: 'Start' // Options
+        }
+    },
+    {
+        name: "Xbox Controller",
+        vendor: "045e",
+        buttonMappings: {
+            2: 'A', // A
+            3: 'B', // B
+            6: 'Select', // Back
+            7: 'Start' // Start
+        }
+    }
+]
+
+let connectedController;
+let gamepadHandlerInterval;
 
 let counter = parseInt(localStorage.getItem('counter')) || 0;
 let lastPressTimestamp = 0;
@@ -49,35 +75,11 @@ function gamepadHandler() {
         return;
     }
 
-    // Detect the controller type based on the vendor ID
-    const isXboxController = gamepad.vendor === 0x045E;
-
-    // Map button indices to button names
-    const ps4ButtonMap = {
-        '0': 'X',
-        '1': 'O',
-        '8': 'Share',
-        '9': 'Options'
-    };
-
-    const xboxButtonMap = {
-        '2': 'A', // Xbox A button
-        '3': 'B', // Xbox B button
-        '6': 'Back', // Xbox Back button
-        '7': 'Start' // Xbox Start button
-    };
-
-    // Use the correct button map based on the controller type
-    const buttonMap = isXboxController ? xboxButtonMap : ps4ButtonMap;
-
     // Iterate over the specific buttons (X, O, Share, Options)
-    Object.entries(buttonMap).forEach(([index, buttonName]) => {
+    Object.entries(connectedController.buttonMappings).forEach(([index, buttonName]) => {
         const button = gamepad.buttons[index];
         if (button && button.pressed) {
-            if (!isXboxController) {
-                // Only update the button states if it's not an Xbox controller
-                buttonStates[buttonName] = true;
-            }
+            buttonStates[buttonName] = true;
         } else {
             buttonStates[buttonName] = false;
         }
@@ -93,16 +95,23 @@ if ('getGamepads' in navigator) {
         console.log('Gamepad connected at index %d: %s. %d buttons, %d axes.',
             event.gamepad.index, event.gamepad.id,
             event.gamepad.buttons.length, event.gamepad.axes.length);
+
+        connectedController = controllers.find(controller => event.gamepad.id.includes(controller.vendor));
+
+        // Check for gamepad input every 100 milliseconds
+        gamepadHandlerInterval = setInterval(gamepadHandler, 100);
     });
 
     // Listen for gamepad disconnection
     window.addEventListener('gamepaddisconnected', (event) => {
         console.log('Gamepad disconnected from index %d: %s',
             event.gamepad.index, event.gamepad.id);
+
+        connectedController = undefined;
+        clearInterval(gamepadHandlerInterval);
+        gamepadHandlerInterval = undefined;
     });
 
-    // Check for gamepad input every 100 milliseconds
-    setInterval(gamepadHandler, 100);
 } else {
     console.error('Gamepad API not supported, please use a modern browser.');
 }
@@ -114,7 +123,6 @@ window.addEventListener('load', () => {
 
 // Manual increment and decrement functions
 function updateCounterManually() {
-    const manualCounterValue = parseInt(document.getElementById('manualCounter').value) || 0;
-    counter = manualCounterValue;
+    counter = parseInt(document.getElementById('manualCounter').value) || 0;
     updateCounter();
 }
